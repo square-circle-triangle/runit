@@ -6,9 +6,11 @@ version           "0.15.0"
 
 recipe "runit", "Installs and configures runit"
 
-%w{ ubuntu debian gentoo }.each do |os|
+%w{ ubuntu debian gentoo freebsd }.each do |os|
   supports os
 end
+
+depends 'freebsd'
 
 attribute "runit",
   :display_name => "Runit",

@@ -20,6 +20,7 @@
 define :runit_service, :directory => nil, :only_if => false, :finish_script => false, :control => [], :run_restart => true, :active_directory => nil, :owner => "root", :group => "root", :template_name => nil, :log_template_name => nil, :control_template_names => {}, :finish_script_template_name => nil, :start_command => "start", :stop_command => "stop", :restart_command => "restart", :status_command => "status", :options => Hash.new, :env => Hash.new, :default_logger => false, :nolog => false do
   include_recipe "runit"
 
+  params[:group] = 'wheel' if params[:group] == 'root' && platform?("freebsd")
   params[:directory] ||= node[:runit][:sv_dir]
   params[:active_directory] ||= node[:runit][:service_dir]
   params[:template_name] ||= params[:name]

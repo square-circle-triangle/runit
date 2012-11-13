@@ -17,8 +17,10 @@
 # limitations under the License.
 #
 
+include_recipe "freebsd"
+
 case node[:platform]
-when "debian","ubuntu", "gentoo"
+when "debian","ubuntu", "gentoo", "freebsd"
   execute "start-runsvdir" do
     command value_for_platform(
       "debian" => { "default" => "runsvdir-start" },
@@ -41,6 +43,12 @@ when "debian","ubuntu", "gentoo"
     end
   end
 
+  directory node[:runit][:sv_dir] do
+    owner "root"
+    group "wheel"
+    only_if {platform? "freebsd"}
+  end
+
   package "runit" do
     action :install
     if platform?("ubuntu", "debian")
@@ -59,6 +67,11 @@ when "debian","ubuntu", "gentoo"
       "debian" => { "squeeze/sid" => :run, "default" => :nothing },
       "default" => :nothing
     ), resources(:execute => "runit-hup-init"), :immediately
+  end
+
+  service "runsvdir" do
+    action [:enable, :start]
+    only_if { platform? "freebsd" }
   end
 
   if node[:platform] =~ /ubuntu/i && node[:platform_version].to_f <= 8.04
