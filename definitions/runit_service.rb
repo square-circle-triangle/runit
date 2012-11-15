@@ -48,21 +48,7 @@ define :runit_service, :directory => nil, :only_if => false, :finish_script => f
     action :create
   end
 
-  file sv_dir_name + "/supervise/ok" do
-    owner params[:owner]
-    group params[:group]
-    mode 0644
-    action :create
-    only_if { File.exists? sv_dir_name + "/supervise/ok" }
-  end
-
-  file sv_dir_name + "/supervise/control" do
-    owner params[:owner]
-    group params[:group]
-    mode 0600
-    action :create
-    only_if { File.exists? sv_dir_name + "/supervise/control" }
-  end
+  execute "chown -R #{params[:owner]}:#{params[:group]} #{sv_dir_name}/supervise"
 
   unless params[:nolog]
     directory "#{sv_dir_name}/log" do
